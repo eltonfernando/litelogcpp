@@ -14,6 +14,7 @@ int main()
 
     Logging::getInstance().addLogger(std::move(logFile));
     Logging::getInstance().addLogger(std::move(logSys));
+    Logging::getInstance().setBaseDir("/home/elton/Projetos/meu_git/litelogcpp/");
    
     LOG_DEBUG("Elton Hello World!");
     LOG_INFO("Elton Hello World!");

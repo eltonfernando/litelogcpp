@@ -8,7 +8,8 @@ Lib de logging para c++
 2. [ x ] File log
 3. [ x ] Color log file
 4. [ x ] Thread safey
-5. [  ] Benchmarks
+5. [ x  ] path relative
+6. [  ] Benchmarks
 
 build 
 ```shel
@@ -37,6 +38,7 @@ int main()
 
     Logging::getInstance().addLogger(std::move(logFile));
     Logging::getInstance().addLogger(std::move(logSys));
+    Logging::getInstance().setBaseDir("/home/elton/Projetos/meu_git/litelogcpp/");
    
     LOG_DEBUG("Elton Hello World!");
     LOG_INFO("Elton Hello World!");

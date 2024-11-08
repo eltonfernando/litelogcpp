@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include <fstream>
+#include <filesystem>
 #include <mutex>
 
 #define CSI "\x1B[" // Control Sequence Introducer (ANSI spec name)
@@ -75,10 +76,13 @@ public:
     std::string toString(LogLevel level);
     void log(LogLevel level, const std::string &file, int line, const std::string &message);
     void addLogger(std::unique_ptr<ILogger> logger) { loggers.push_back(std::move(logger)); }
+    void setBaseDir(const std::string &dir) { base_dir = std::filesystem::path(dir); }
+    std::string pathToRelative(const std::string &path);
     std::string getCurrentDateTime();
    
 private:
     std::vector<std::unique_ptr<ILogger>> loggers;
+    std::filesystem::path base_dir;
     
 };
 

@@ -6,11 +6,11 @@
 
 
 
-void Logging::log(LogLevel currenteLevel, const std::string& file,int line ,const std::string& message){
-
-    auto msg = getCurrentDateTime() + " "+toString(currenteLevel) + " " + file + ":" + std::to_string(line) + " " + message;
+void Logging::log(LogLevel currentLevel, const std::string& file,int line ,const std::string& message){
+    
+    auto msg = getCurrentDateTime() + " "+toString(currentLevel) + " " + pathToRelative(file) + ":" + std::to_string(line) + " " + message;
     for (const auto& logger : loggers)
-        logger->write(currenteLevel, msg);
+        logger->write(currentLevel, msg);
    
 }
 std::string Logging::getCurrentDateTime() {
@@ -22,6 +22,10 @@ std::string Logging::getCurrentDateTime() {
         return oss.str();
 }
 
+std::string Logging::pathToRelative(const std::string &path) {
+    std::filesystem::path absPath(path);
+    return absPath.lexically_relative(base_dir).string();
+}
 
 std::string Logging::toString(LogLevel level)
 {
@@ -45,6 +49,7 @@ std::string Logging::toString(LogLevel level)
 
 SysLog::SysLog() {
     level = LogLevel::DEBUG;
+    
     
 }
 
