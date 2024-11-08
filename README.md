@@ -1,6 +1,15 @@
 # litelogcpp
 Lib de logging para c++
 
+![](doc/image.png)
+## Features
+
+1. [ x ] Console log
+2. [ x ] File log
+3. [ x ] Color log file
+4. [ x ] Thread safey
+5. [  ] Benchmarks
+
 build 
 ```shel
 git clone https://github.com/eltonfernando/litelogcpp.git
@@ -37,3 +46,4 @@ int main()
     return 0;
 }
 ```
+
