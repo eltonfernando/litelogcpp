@@ -10,7 +10,28 @@
 #define RED CSI "0;31m"
 #define RED_BOLD CSI "1;31m"
 
+
 //------------------------------------------------------------------
+class ILogger
+{
+public:
+    virtual void write(Logging::LogLevel currentLevel, const std::string &message) =0;
+    
+};
+
+//------------------------------------------------------------------
+
+class SysLog : public ILogger
+{
+public:
+    SysLog() = default;
+    SysLog(Logging::LogLevel loggerLevel);
+    void write(Logging::LogLevel currentLevel, const std::string &message);
+    
+private: 
+    std::string colorLog(Logging::LogLevel currentLevel, const std::string &message);
+    Logging::LogLevel level = Logging::LogLevel::DEBUG;
+};
 
 class Logging
 {
@@ -41,23 +62,6 @@ public:
         return "UNKNOWN";
     }
 
-    static std::string colorLog(LogLevel level, std::string &message)
-    {
-        switch (level)
-        {
-        case LogLevel::DEBUG:
-            return WHITE + message + CLEAR;
-        case LogLevel::INFO:
-            return GREEN + message + CLEAR;
-        case LogLevel::WARN:
-            return YELLOW + message + CLEAR;
-        case LogLevel::ERROR:
-            return RED + message + CLEAR;
-        case LogLevel::FATAL:
-            return RED_BOLD + message + CLEAR;
-        }
-        return "UNKNOWN";
-    }
     static Logging &getInstance()
     {
         static Logging instance;
@@ -65,12 +69,14 @@ public:
     }
     void log(LogLevel level, const std::string &file, int line, const std::string &message);
     void debug(const std::string &file, const int &line, const std::string &message);
-    void setLevel(LogLevel level) { this->level = level; }
+    void setLevel(LogLevel level) { this->level = level;}
     std::string getCurrentDateTime();
+    // addLogger(ILogger *logger) { loggers.push_back(logger);}
 
     //~Logging();
 private:
     LogLevel level = LogLevel::DEBUG;
+    //std::vector<ILogger *> loggers;
 
 };
 
