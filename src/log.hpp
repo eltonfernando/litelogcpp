@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include <fstream>
+#include <mutex>
 
 #define CSI "\x1B[" // Control Sequence Introducer (ANSI spec name)
 #define CLEAR CSI "0m"
@@ -77,6 +78,7 @@ public:
    
 private:
     std::vector<std::unique_ptr<ILogger>> loggers;
+    std::mutex mutex;
 };
 
 

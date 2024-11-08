@@ -9,6 +9,7 @@
 void Logging::log(LogLevel currenteLevel, const std::string& file,int line ,const std::string& message){
 
     auto msg = getCurrentDateTime() + " "+toString(currenteLevel) + " " + file + ":" + std::to_string(line) + " " + message;
+    std::lock_guard<std::mutex> lock(mutex);
     for (const auto& logger : loggers)
         logger->write(currenteLevel, msg);
 }
