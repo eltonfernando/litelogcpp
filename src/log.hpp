@@ -66,6 +66,7 @@ public:
     void log(LogLevel level, const std::string &file, int line, const std::string &message);
     void debug(const std::string &file, const int &line, const std::string &message);
     void setLevel(LogLevel level) { this->level = level; }
+    std::string getCurrentDateTime();
 
     //~Logging();
 private:
