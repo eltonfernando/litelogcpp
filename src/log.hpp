@@ -37,6 +37,7 @@ public:
     SysLog();
     SysLog(LogLevel loggerLevel);
     virtual void write(LogLevel currentLevel, const std::string &message);
+    void setLevel(LogLevel level) { this->level = level; }
 
 private:
     std::string colorLog(LogLevel currentLevel, const std::string &message);
@@ -66,19 +67,14 @@ public:
     static Logging &getInstance()
     {
         static Logging instance;
-       if (instance.loggers.empty()){
-            instance.loggers.push_back(std::make_unique<SysLog>(LogLevel::DEBUG));
-            instance.loggers.push_back(std::make_unique<FileWriter>("log.txt"));}
         return instance;
     }
     std::string toString(LogLevel level);
     void log(LogLevel level, const std::string &file, int line, const std::string &message);
-    void debug(const std::string &file, const int &line, const std::string &message);
-    void setLevel(LogLevel level) { this->level = level; }
+    void addLogger(std::unique_ptr<ILogger> logger) { loggers.push_back(std::move(logger)); }
     std::string getCurrentDateTime();
     //~Logging();
 private:
-    LogLevel level = LogLevel::DEBUG;
     std::vector<std::unique_ptr<ILogger>> loggers;
 };
 

@@ -7,8 +7,7 @@
 
 
 void Logging::log(LogLevel currenteLevel, const std::string& file,int line ,const std::string& message){
-    if (this->level > currenteLevel)
-        return;
+
     auto msg = getCurrentDateTime() + " "+toString(currenteLevel) + " " + file + ":" + std::to_string(line) + " " + message;
     for (const auto& logger : loggers)
         logger->write(currenteLevel, msg);
@@ -21,11 +20,7 @@ std::string Logging::getCurrentDateTime() {
         oss << std::put_time(&localTime, "%Y-%m-%d %H:%M:%S");
         return oss.str();
 }
-void Logging::debug(const std::string& file, const int& line, const std::string& message){
-    if (level > LogLevel::DEBUG)
-        return;
-    log(LogLevel::DEBUG, file, line, message);
-}
+
 
 std::string Logging::toString(LogLevel level)
 {
