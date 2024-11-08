@@ -27,6 +27,10 @@ class ILogger
 {
 public:
     virtual void write(LogLevel currentLevel, const std::string &message) = 0;
+    void setLevel(LogLevel level) { this->level = level; }
+
+protected:
+    LogLevel level = LogLevel::DEBUG;
 };
 
 //------------------------------------------------------------------
@@ -35,27 +39,24 @@ class SysLog : public ILogger
 {
 public:
     SysLog();
-    SysLog(LogLevel loggerLevel);
     virtual void write(LogLevel currentLevel, const std::string &message);
-    void setLevel(LogLevel level) { this->level = level; }
+    
 
 private:
     std::string colorLog(LogLevel currentLevel, const std::string &message);
-    LogLevel level = LogLevel::DEBUG;
 };
 
 
 class FileWriter: public ILogger
 {
 public:
-    explicit FileWriter(const std::string &filename);
+     explicit FileWriter(const std::string &filename);
     ~FileWriter();
     virtual void write(LogLevel currentLevel, const std::string &message);
     void close();
     private:
         std::ofstream m_file;
         std::string m_filename;
-        LogLevel level = LogLevel::DEBUG;
 
 };
 
@@ -73,7 +74,7 @@ public:
     void log(LogLevel level, const std::string &file, int line, const std::string &message);
     void addLogger(std::unique_ptr<ILogger> logger) { loggers.push_back(std::move(logger)); }
     std::string getCurrentDateTime();
-    //~Logging();
+   
 private:
     std::vector<std::unique_ptr<ILogger>> loggers;
 };

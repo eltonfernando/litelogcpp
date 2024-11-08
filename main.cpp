@@ -7,8 +7,8 @@
 
 int main()
 {   
-    auto logFile = std::make_unique<FileWriter>("logxx.txt");
-    //logFile->setLevel(LogLevel::INFO);
+    auto logFile = std::make_unique<FileWriter>("log.txt");
+    logFile->setLevel(LogLevel::INFO);
     auto logSys = std::make_unique<SysLog>();
     logSys->setLevel(LogLevel::DEBUG);
 

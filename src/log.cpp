@@ -47,9 +47,6 @@ SysLog::SysLog() {
     
 }
 
-SysLog::SysLog(LogLevel loggerLevel) {
-    level = loggerLevel;
-}
 void SysLog::write(LogLevel currentLevel, const std::string &message) {
     if(this->level > currentLevel)
         return;
