@@ -9,9 +9,9 @@
 void Logging::log(LogLevel currenteLevel, const std::string& file,int line ,const std::string& message){
 
     auto msg = getCurrentDateTime() + " "+toString(currenteLevel) + " " + file + ":" + std::to_string(line) + " " + message;
-    std::lock_guard<std::mutex> lock(mutex);
     for (const auto& logger : loggers)
         logger->write(currenteLevel, msg);
+   
 }
 std::string Logging::getCurrentDateTime() {
         auto now = std::chrono::system_clock::now();
@@ -85,8 +85,10 @@ FileWriter::FileWriter(const std::string &filename):
 void FileWriter::write(LogLevel currentLevel, const std::string &message) {
     if (this->level > currentLevel)
         return;
-    if (m_file.is_open())
+    if (m_file.is_open()){
+        std::lock_guard<std::mutex> guard(m_mutex);
         m_file << message << std::endl;
+    }
     else
         throw std::runtime_error("Failed to open file" + m_filename);
 }

@@ -58,6 +58,7 @@ public:
     private:
         std::ofstream m_file;
         std::string m_filename;
+        std::mutex m_mutex;
 
 };
 
@@ -78,7 +79,7 @@ public:
    
 private:
     std::vector<std::unique_ptr<ILogger>> loggers;
-    std::mutex mutex;
+    
 };
 
 
