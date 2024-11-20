@@ -2,10 +2,7 @@
 
 #include <filesystem>
 #include <fstream>
-#include <iostream>
-#include <memory>
 #include <mutex>
-#include <string>
 #include <vector>
 
 #define CSI "\x1B["  // Control Sequence Introducer (ANSI spec name)
@@ -21,6 +18,7 @@ enum class LogLevel { DEBUG = 0, INFO, WARN, ERROR, FATAL };
 //------------------------------------------------------------------
 class ILogger {
  public:
+  virtual ~ILogger() = default;
   virtual void write(LogLevel currentLevel, const std::string &message) = 0;
   void setLevel(LogLevel level) { this->level = level; }
 
@@ -33,7 +31,7 @@ class ILogger {
 class SysLog : public ILogger {
  public:
   SysLog();
-  virtual void write(LogLevel currentLevel, const std::string &message);
+  void write(LogLevel currentLevel, const std::string &message) override;
 
  private:
   std::string colorLog(LogLevel currentLevel, const std::string &message);
@@ -43,7 +41,7 @@ class FileWriter : public ILogger {
  public:
   explicit FileWriter(const std::string &filename);
   ~FileWriter();
-  virtual void write(LogLevel currentLevel, const std::string &message);
+  void write(LogLevel currentLevel, const std::string &message) override;
   void close();
 
  private:
