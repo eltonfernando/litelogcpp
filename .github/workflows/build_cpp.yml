@@ -1,0 +1,49 @@
+---
+name: Build C++ Modules
+
+on:
+    push:
+        branches:
+            - main
+    pull_request:
+        paths:
+            - src/**
+            - .github/workflows/build_cpp.yml
+
+jobs:
+    build-cpp:
+        runs-on: windows-2022
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v3
+
+            - name: Set up MSVC
+              uses: ilammy/msvc-dev-cmd@v1
+
+
+            # Cache dos arquivos de build
+            - name: Cache build files
+              uses: actions/cache@v3
+              with:
+                  path: build
+                  key: ${{ runner.os }}-build-${{ hashFiles('**/CMakeLists.txt', '**/*.cpp', '**/*.hpp') }}
+                  restore-keys: |
+                      ${{ runner.os }}-build-
+
+            - name: Configure CMake
+              run: |
+                  if (!(Test-Path build)) { New-Item -ItemType Directory -Path build }
+                  cd build
+                  cmake ../src -DCMAKE_BUILD_TYPE=Release
+
+            - name: Build C++
+              run: |
+                  cd build
+                  cmake --build . --config Release
+
+            - name: Upload C++ binaries
+              uses: actions/upload-artifact@v4
+              with:
+                  name: cpp-binaries
+                  path: build/Release/

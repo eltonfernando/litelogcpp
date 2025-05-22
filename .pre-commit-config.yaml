@@ -9,12 +9,12 @@ repos:
         args: [--style=Google, -i]  # Estilo Google, formata no lugar
 
   # Linter - clang-tidy
-#  - repo: https://github.com/pocc/pre-commit-hooks
-#    rev: v1.3.5
-#    hooks:
-#      - id: clang-tidy
-#        args: [-fix , -p=build]
-#        types_or: [c++]
+  - repo: https://github.com/pocc/pre-commit-hooks
+    rev: v1.3.5
+    hooks:
+      - id: clang-tidy
+        args: [-fix , -p=build]
+        types_or: [c++]
         # Remova additional_dependencies
 
   # Verificador de formatação CMake
