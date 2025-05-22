@@ -1,8 +1,12 @@
+#pragma once
 #include <stdio.h>
 
 #include <filesystem>
 #include <fstream>
+#include <iostream>
+#include <memory>
 #include <mutex>
+#include <string>
 #include <vector>
 
 #define CSI "\x1B["  // Control Sequence Introducer (ANSI spec name)
@@ -18,9 +22,9 @@ enum class LogLevel { DEBUG = 0, INFO, WARN, ERROR, FATAL };
 //------------------------------------------------------------------
 class ILogger {
  public:
-  virtual ~ILogger() = default;
   virtual void write(LogLevel currentLevel, const std::string &message) = 0;
   void setLevel(LogLevel level) { this->level = level; }
+  virtual ~ILogger() = default;
 
  protected:
   LogLevel level = LogLevel::DEBUG;
@@ -31,7 +35,8 @@ class ILogger {
 class SysLog : public ILogger {
  public:
   SysLog();
-  void write(LogLevel currentLevel, const std::string &message) override;
+  virtual void write(LogLevel currentLevel,
+                     const std::string &message) override;
 
  private:
   std::string colorLog(LogLevel currentLevel, const std::string &message);
@@ -41,7 +46,8 @@ class FileWriter : public ILogger {
  public:
   explicit FileWriter(const std::string &filename);
   ~FileWriter();
-  void write(LogLevel currentLevel, const std::string &message) override;
+  virtual void write(LogLevel currentLevel,
+                     const std::string &message) override;
   void close();
 
  private:
@@ -56,7 +62,7 @@ class Logging {
     static Logging instance;
     return instance;
   }
-  std::string toString(LogLevel level);
+  std::string toString(LogLevel level) const;
   void log(LogLevel level, const std::string &file, int line,
            const std::string &message);
   void addLogger(std::unique_ptr<ILogger> logger) {
@@ -65,8 +71,8 @@ class Logging {
   void setBaseDir(const std::string &dir) {
     base_dir = std::filesystem::path(dir);
   }
-  std::string pathToRelative(const std::string &path);
-  std::string getCurrentDateTime();
+  std::string pathToRelative(const std::string &path) const;
+  std::string getCurrentDateTime() const;
 
  private:
   std::vector<std::unique_ptr<ILogger>> loggers;

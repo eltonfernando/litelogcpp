@@ -1,9 +1,12 @@
 #include "log.hpp"
 
 #include <chrono>
+#include <ctime>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <sstream>
+#include <stdexcept>
 
 void Logging::log(LogLevel currentLevel, const std::string &file, int line,
                   const std::string &message) {
@@ -11,21 +14,28 @@ void Logging::log(LogLevel currentLevel, const std::string &file, int line,
              pathToRelative(file) + ":" + std::to_string(line) + " " + message;
   for (const auto &logger : loggers) logger->write(currentLevel, msg);
 }
-std::string Logging::getCurrentDateTime() {
+
+std::string Logging::getCurrentDateTime() const {
   auto now = std::chrono::system_clock::now();
   std::time_t time = std::chrono::system_clock::to_time_t(now);
-  std::tm localTime = *std::localtime(&time);
-  std::ostringstream oss;
-  oss << std::put_time(&localTime, "%Y-%m-%d %H:%M:%S");
-  return oss.str();
+  std::tm localTime;
+#ifdef _WIN32
+  localtime_s(&localTime, &time);
+#else
+  localtime_r(&time, &localTime);
+#endif
+
+  std::stringstream ss;
+  ss << std::put_time(&localTime, "%Y-%m-%d %H:%M:%S");
+  return ss.str();
 }
 
-std::string Logging::pathToRelative(const std::string &path) {
+std::string Logging::pathToRelative(const std::string &path) const {
   std::filesystem::path absPath(path);
   return absPath.lexically_relative(base_dir).string();
 }
 
-std::string Logging::toString(LogLevel level) {
+std::string Logging::toString(LogLevel level) const {
   switch (level) {
     case LogLevel::DEBUG:
       return "DEBUG";
@@ -82,6 +92,7 @@ void FileWriter::write(LogLevel currentLevel, const std::string &message) {
     throw std::runtime_error("Failed to open file" + m_filename);
 }
 void FileWriter::close() {
+  std::lock_guard<std::mutex> guard(m_mutex);
   if (m_file.is_open()) m_file.close();
 }
 FileWriter::~FileWriter() { close(); }
